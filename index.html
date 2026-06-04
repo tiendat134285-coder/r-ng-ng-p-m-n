@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8">
-<title>Trình xem Video 360°</title>
+<title>Video 360° Có Âm Thanh</title>
 
 <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
 
@@ -28,40 +28,40 @@ body { margin: 0; overflow: hidden; }
 
 <body>
 
-<button id="playButton">Bấm để xem video 360°</button>
+<button id="playButton">BẤM ĐỂ XEM VIDEO 360°</button>
 
 <a-scene vr-mode-ui="enabled: true">
 
   <a-assets>
-    <!-- FILE VIDEO -->
+    <!-- VIDEO KHÔNG muted -->
     <video id="video360"
            src="1.mp4"
            preload="auto"
            loop
-           muted
            crossorigin="anonymous"
            playsinline
            webkit-playsinline>
     </video>
   </a-assets>
 
-  <!-- CAMERA CHUẨN 360 -->
+  <!-- Camera -->
   <a-entity camera
             look-controls="touchEnabled: true; mouseEnabled: true; magicWindowTrackingEnabled: true">
   </a-entity>
 
-  <!-- VIDEO 360 -->
+  <!-- Video 360 -->
   <a-videosphere src="#video360" rotation="0 -90 0"></a-videosphere>
 
 </a-scene>
 
 <script>
-const playButton = document.getElementById('playButton');
+const btn = document.getElementById('playButton');
 const video = document.getElementById('video360');
 
-playButton.addEventListener('click', async () => {
+btn.addEventListener('click', async () => {
   try {
-    // XIN QUYỀN CẢM BIẾN (iPhone)
+
+    // ✅ Xin quyền cảm biến (iPhone)
     if (typeof DeviceOrientationEvent !== "undefined" &&
         typeof DeviceOrientationEvent.requestPermission === "function") {
 
@@ -73,15 +73,17 @@ playButton.addEventListener('click', async () => {
       }
     }
 
-    // BẬT ÂM THANH
-    video.muted = false;
-    video.volume = 1;
-
-    // PHÁT VIDEO
+    // ✅ Trick bắt buộc để có âm thanh trên mọi trình duyệt
+    video.muted = true;
     await video.play();
 
-    // ẨN NÚT
-    playButton.style.display = 'none';
+    // bật lại âm thanh sau khi đã play
+    setTimeout(() => {
+      video.muted = false;
+      video.volume = 1;
+    }, 300);
+
+    btn.style.display = "none";
 
   } catch (err) {
     alert("Lỗi phát video: " + err.message);
